@@ -48,7 +48,9 @@ async function handler(req) {
         'X-Forwarded-Path': req.baseUrl,
         'X-Forwarded-Method': method,
         'X-Forwarded-Url': req.originalUrl,
+
         'X-Forfarded-By': 'api-gateway',
+        'X-Forwarded-Name': route.name,
     }
 
     const response = await fetch(url, {

@@ -23,7 +23,7 @@ describe('proxy', () => {
     describe('when a route is found', () => {
         beforeEach(() => {
             routes.push({
-                name: "test-service",
+                name: 'test-service',
                 context: ['/test'],
                 pathRewrite: {
                     '^/test': '/api',
@@ -39,7 +39,7 @@ describe('proxy', () => {
 
         it('should proxy the request', async () => {
             routes.push({
-                name: "test-service",
+                name: 'test-service',
                 context: ['/test'],
                 pathRewrite: {
                     '^/test': '/api',
@@ -79,23 +79,27 @@ describe('proxy', () => {
                 response,
             })
 
-            expect(fetch).toHaveBeenCalledWith('https://api.example.com/api/1', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Forwarded-For': req.ip,
-                    'X-Forwarded-Proto': req.protocol,
-                    'X-Forwarded-Port': req.socket.localPort,
-                    'X-Forwarded-Host': req.hostname,
-                    'X-Forwarded-Path': req.baseUrl,
-                    'X-Forwarded-Method': req.method,
-                    'X-Forwarded-Url': req.originalUrl,
-                    'X-Forfarded-By': 'api-gateway',
-                },
-                body: JSON.stringify({}),
-                follow: false,
-                timeout: 1000,
-            })
+            expect(fetch).toHaveBeenCalledWith(
+                'https://api.example.com/api/1',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Forwarded-For': req.ip,
+                        'X-Forwarded-Proto': req.protocol,
+                        'X-Forwarded-Port': req.socket.localPort,
+                        'X-Forwarded-Host': req.hostname,
+                        'X-Forwarded-Path': req.baseUrl,
+                        'X-Forwarded-Method': req.method,
+                        'X-Forwarded-Url': req.originalUrl,
+                        'X-Forfarded-By': 'api-gateway',
+                        'X-Forwarded-Name': 'test-service',
+                    },
+                    body: JSON.stringify({}),
+                    follow: false,
+                    timeout: 1000,
+                }
+            )
         })
     })
 })
