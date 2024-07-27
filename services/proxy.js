@@ -34,7 +34,7 @@ async function handler(req) {
     }
 
     const servicePath = Object.entries(route.pathRewrite).reduce(
-        (acc, [key, value]) => acc.replace(key, value),
+        (acc, [key, value]) => acc.replace(new RegExp(key), value),
         path
     )
 
