@@ -1,0 +1,8 @@
+[
+    {
+        "name": "user-service",
+        "context": ["/users"],
+        "target": "http://localhost:3001",
+        "pathRewrite": {}
+    }
+]

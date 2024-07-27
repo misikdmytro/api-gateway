@@ -1,21 +1,8 @@
-const express = require('express');
-const winston = require('winston');
+const buildApp = require('./app')
+const logger = require('./logger')
 
-const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.json(),
-    defaultMeta: { service: 'api-gateway' },
-    transports: [
-        new winston.transports.Console(),
-    ],
-});
-
-const app = express();
-
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+const app = buildApp()
 
 app.listen(3000, () => {
-    logger.info('API Gateway listening', { port: 3000 });
-});
+    logger.info('API Gateway started', { port: 3000 })
+})

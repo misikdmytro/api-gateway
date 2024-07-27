@@ -5,14 +5,22 @@
     "license": "MIT",
     "scripts": {
         "start": "node index.js",
-        "lint": "eslint ."
+        "test": "jest",
+        "lint": "eslint . && prettier . --check",
+        "format": "prettier . --write",
+        "coverage": "jest --coverage"
     },
     "dependencies": {
         "express": "^4.19.2",
+        "node-fetch": "2.7.0",
         "winston": "^3.13.1"
     },
     "devDependencies": {
-        "eslint": "^8.52.0",
+        "@eslint/js": "^9.8.0",
+        "@types/express": "^4.17.21",
+        "eslint": "9.x",
+        "globals": "^15.8.0",
+        "jest": "^29.7.0",
         "prettier": "^3.1.0",
         "prettier-eslint": "^16.1.2"
     }
