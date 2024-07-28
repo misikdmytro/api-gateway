@@ -21,12 +21,14 @@ module.exports = (req, res, next) => {
             url,
             statusCode: res.statusCode,
             ms,
+            requestId: req.id,
         })
     })
 
     logger.debug(`Method called`, {
         method,
         url,
+        requestId: req.id,
     })
 
     next()

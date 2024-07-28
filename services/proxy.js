@@ -6,6 +6,9 @@ const errors = {
     ROUTE_NOT_FOUND: 'ROUTE_NOT_FOUND',
 }
 
+const defaultTimeout = parseInt(process.env.HTTP_DEFAULT_TIMEOUT) || 5000
+const nonBodyMethods = ['GET', 'HEAD']
+
 /**
  * @typedef {import('node-fetch').Response} Response
  * @typedef Result
@@ -51,14 +54,17 @@ async function handler(req) {
 
         'X-Forfarded-By': 'api-gateway',
         'X-Forwarded-Name': route.name,
+        'X-Request-Id': req.id,
     }
+
+    const reqBody = nonBodyMethods.includes(method) ? undefined : body
 
     const response = await fetch(url, {
         method,
         headers: reqHeaders,
-        body,
-        follow: false,
-        timeout: route?.timeout || 5000,
+        body: reqBody,
+        follow: 0,
+        timeout: route?.timeout || defaultTimeout,
     })
 
     return {

@@ -24,11 +24,10 @@ module.exports = async (req, res, next) => {
         }
 
         res.status(response.status)
-        for (const [key, value] of Object.entries(response.headers)) {
-            res.setHeader(key, value)
-        }
+        response.headers.forEach((value, key) => res.setHeader(key, value))
 
-        res.send(response.body)
+        const content = await response.buffer()
+        res.send(content)
     } catch (err) {
         next(err)
     }
