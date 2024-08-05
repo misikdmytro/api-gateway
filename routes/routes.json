@@ -1,6 +1,7 @@
 [
     {
         "name": "auth-clients-service",
+        "methods": ["GET"],
         "context": ["/clients"],
         "target": "http://localhost:3002",
         "pathRewrite": {},
@@ -8,6 +9,7 @@
     },
     {
         "name": "auth-service",
+        "methods": ["POST"],
         "context": ["/auth"],
         "target": "http://localhost:3002",
         "pathRewrite": {
@@ -15,9 +17,23 @@
         }
     },
     {
-        "name": "user-service",
+        "name": "user-service-read",
+        "methods": ["GET"],
         "context": ["/users"],
         "target": "http://localhost:3001",
-        "pathRewrite": {}
+        "pathRewrite": {},
+        "secure": {
+            "scope": "user:read"
+        }
+    },
+    {
+        "name": "user-service-write",
+        "methods": ["POST", "PUT", "DELETE"],
+        "context": ["/users"],
+        "target": "http://localhost:3001",
+        "pathRewrite": {},
+        "secure": {
+            "scope": "user:write"
+        }
     }
 ]

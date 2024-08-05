@@ -26,8 +26,10 @@ const nonBodyMethods = ['GET', 'HEAD']
 async function handler(req) {
     const { path, method, headers, body, ip } = req
 
-    const route = routes.find((route) =>
-        route.context.some((c) => path.startsWith(c))
+    const route = routes.find(
+        (route) =>
+            route.context.some((c) => path.startsWith(c)) &&
+            route.methods.includes(method)
     )
     if (!route || route?.internal) {
         return {

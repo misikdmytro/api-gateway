@@ -40,18 +40,32 @@ describe('proxy', () => {
 
     describe('when a route is found', () => {
         beforeEach(() => {
-            routes.push({
-                name: 'test-service',
-                context: ['/test'],
-                pathRewrite: {
-                    '^/test': '/api',
+            routes.push(
+                {
+                    name: 'test-write-service',
+                    methods: ['POST'],
+                    context: ['/test'],
+                    pathRewrite: {
+                        '^/test': '/api',
+                    },
+                    target: 'https://api.write.example.com',
+                    timeout: 1000,
                 },
-                target: 'https://api.example.com',
-                timeout: 1000,
-            })
+                {
+                    name: 'test-read-service',
+                    methods: ['HEAD', 'GET'],
+                    context: ['/test'],
+                    pathRewrite: {
+                        '^/test': '/api',
+                    },
+                    target: 'https://api.read.example.com',
+                    timeout: 1000,
+                }
+            )
         })
 
         afterEach(() => {
+            routes.pop()
             routes.pop()
         })
 
@@ -89,7 +103,7 @@ describe('proxy', () => {
             })
 
             expect(fetch).toHaveBeenCalledWith(
-                'https://api.example.com/api/1',
+                'https://api.write.example.com/api/1',
                 {
                     method: 'POST',
                     headers: {
@@ -102,7 +116,7 @@ describe('proxy', () => {
                         'X-Forwarded-Method': req.method,
                         'X-Forwarded-Url': req.originalUrl,
                         'X-Forfarded-By': 'api-gateway',
-                        'X-Forwarded-Name': 'test-service',
+                        'X-Forwarded-Name': 'test-write-service',
                         'X-Request-Id': req.id,
                     },
                     body: JSON.stringify({}),
@@ -148,7 +162,7 @@ describe('proxy', () => {
                 })
 
                 expect(fetch).toHaveBeenCalledWith(
-                    'https://api.example.com/api/1',
+                    'https://api.read.example.com/api/1',
                     {
                         method,
                         headers: {
@@ -161,7 +175,7 @@ describe('proxy', () => {
                             'X-Forwarded-Method': req.method,
                             'X-Forwarded-Url': req.originalUrl,
                             'X-Forfarded-By': 'api-gateway',
-                            'X-Forwarded-Name': 'test-service',
+                            'X-Forwarded-Name': 'test-read-service',
                             'X-Request-Id': req.id,
                         },
                         follow: 0,
