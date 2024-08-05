@@ -22,7 +22,7 @@
         "context": ["/users"],
         "target": "http://localhost:3001",
         "pathRewrite": {},
-        "secure": {
+        "security": {
             "scope": "user:read"
         }
     },
@@ -32,7 +32,7 @@
         "context": ["/users"],
         "target": "http://localhost:3001",
         "pathRewrite": {},
-        "secure": {
+        "security": {
             "scope": "user:write"
         }
     }

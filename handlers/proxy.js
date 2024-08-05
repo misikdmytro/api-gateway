@@ -1,4 +1,5 @@
 const service = require('../services/proxy')
+const { errors: securityErrors } = require('../filters/security')
 
 /**
  * Proxy handler
@@ -16,6 +17,10 @@ module.exports = async (req, res, next) => {
         if (error) {
             if (error === service.errors.ROUTE_NOT_FOUND) {
                 res.status(404).json({ error, message }).send()
+            } else if (error === securityErrors.FORBIDDEN) {
+                res.status(403).json({ error, message }).send()
+            } else if (error === securityErrors.UNATHORIZED) {
+                res.status(401).json({ error, message }).send()
             } else {
                 res.status(500).json({ error, message }).send()
             }

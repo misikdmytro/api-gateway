@@ -13,6 +13,8 @@
     "dependencies": {
         "dotenv": "^16.4.5",
         "express": "^4.19.2",
+        "jsonwebtoken": "^9.0.2",
+        "jwt-decode": "^4.0.0",
         "node-fetch": "2.7.0",
         "uuid": "^10.0.0",
         "winston": "^3.13.1"

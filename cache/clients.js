@@ -5,7 +5,8 @@ async function refreshClients() {
     clients = await getClients()
 }
 
-setInterval(refreshClients, 1000 * 60 * 5)
+const refreshInterval = process.env.CLIENTS_REFRESH_INTERVAL || 1000 * 60 * 5
+setInterval(refreshClients, refreshInterval)
 refreshClients()
 
 /**

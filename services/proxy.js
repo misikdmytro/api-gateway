@@ -1,4 +1,6 @@
 const fetch = require('node-fetch')
+const ChainFilter = require('../filters/chain')
+const SecurityHandler = require('../filters/security')
 
 const routes = require('../routes/routes.json')
 
@@ -36,6 +38,18 @@ async function handler(req) {
             error: errors.ROUTE_NOT_FOUND,
             message: 'route not found',
         }
+    }
+
+    const chain = new ChainFilter()
+    if (route.security) {
+        chain.add(new SecurityHandler(route))
+    }
+
+    const filterResult = chain.process({
+        authorization: req.headers.authorization,
+    })
+    if (!filterResult.result) {
+        return { error: filterResult.error, message: filterResult.message }
     }
 
     const servicePath = Object.entries(route.pathRewrite).reduce(
