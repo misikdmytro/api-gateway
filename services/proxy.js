@@ -29,7 +29,7 @@ async function handler(req) {
     const route = routes.find((route) =>
         route.context.some((c) => path.startsWith(c))
     )
-    if (!route) {
+    if (!route || route?.internal) {
         return {
             error: errors.ROUTE_NOT_FOUND,
             message: 'route not found',

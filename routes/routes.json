@@ -1,5 +1,20 @@
 [
     {
+        "name": "auth-clients-service",
+        "context": ["/clients"],
+        "target": "http://localhost:3002",
+        "pathRewrite": {},
+        "internal": true
+    },
+    {
+        "name": "auth-service",
+        "context": ["/auth"],
+        "target": "http://localhost:3002",
+        "pathRewrite": {
+            "^/auth": "/oauth2"
+        }
+    },
+    {
         "name": "user-service",
         "context": ["/users"],
         "target": "http://localhost:3001",

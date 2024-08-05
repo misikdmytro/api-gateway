@@ -6,19 +6,36 @@ const routes = require('../../routes/routes.json')
 jest.mock('node-fetch')
 
 describe('proxy', () => {
-    it('should return ROUTE_NOT_FOUND when no route is found', async () => {
-        const req = {
-            path: '/not-found',
-        }
+    describe('when no route is found', () => {
+        it('should return ROUTE_NOT_FOUND when no route is found', async () => {
+            const req = {
+                path: '/not-found',
+            }
 
-        const result = await service(req)
+            const result = await service(req)
 
-        expect(result).toEqual({
-            error: 'ROUTE_NOT_FOUND',
-            message: 'route not found',
+            expect(result).toEqual({
+                error: 'ROUTE_NOT_FOUND',
+                message: 'route not found',
+            })
+
+            expect(fetch).not.toHaveBeenCalled()
         })
 
-        expect(fetch).not.toHaveBeenCalled()
+        it('should return ROUTE_NOT_FOUND when the route is internal', async () => {
+            const req = {
+                path: '/clients',
+            }
+
+            const result = await service(req)
+
+            expect(result).toEqual({
+                error: 'ROUTE_NOT_FOUND',
+                message: 'route not found',
+            })
+
+            expect(fetch).not.toHaveBeenCalled()
+        })
     })
 
     describe('when a route is found', () => {

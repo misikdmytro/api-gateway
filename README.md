@@ -6,7 +6,7 @@ This project is a custom API Gateway built using Node.js and Express.The impleme
 
 Currently implemented features:
 
-- routing
+-   routing
 
 ## Installation
 
