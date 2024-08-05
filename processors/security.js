@@ -7,28 +7,27 @@ const errors = {
     FORBIDDEN: 'FORBIDDEN',
 }
 
-class SecurityHandler {
+class SecurityProcessor {
     /**
      * Creates a new security handler
      * @typedef {import('./types').Route} Route
      * @param {Route} route
+     * @param {import('express').Request} req
      */
-    constructor(route) {
-        this.route = route
+    constructor(route, req) {
+        this.__route = route
+        this.__req = req
+        this.__clients = getClients()
     }
 
     /**
      * Processes the request
-     * @typedef {import('./types').Context} Context
      * @typedef {import('./types').Result} Result
-     * @param {Context} context
      * @returns {Result}
      */
-    process(context) {
-        const { scope } = this.route.security
-        const { authorization } = context
-
-        const clients = getClients()
+    process() {
+        const { scope } = this.__route.security
+        const { authorization } = this.__req.headers
 
         // get bearer token
         if (!authorization) {
@@ -61,7 +60,7 @@ class SecurityHandler {
         }
 
         // get client
-        const client = clients.find(
+        const client = this.__clients.find(
             (client) => client.client_id === decoded.client_id
         )
         if (!client) {
@@ -98,5 +97,5 @@ class SecurityHandler {
     }
 }
 
-module.exports = SecurityHandler
+module.exports = SecurityProcessor
 module.exports.errors = errors

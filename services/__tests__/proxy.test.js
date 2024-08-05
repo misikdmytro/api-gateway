@@ -1,11 +1,9 @@
 const { v4: uuidv4 } = require('uuid')
 const fetch = require('node-fetch')
-const service = require('../proxy.js')
+const service = require('../proxy')
 const routes = require('../../routes/routes.json')
-const SecurityHandler = require('../../filters/security')
 
 jest.mock('node-fetch')
-jest.mock('../../filters/security')
 
 describe('proxy', () => {
     describe('when no route is found', () => {
@@ -42,8 +40,6 @@ describe('proxy', () => {
 
     describe('when a route is found', () => {
         beforeEach(() => {
-            SecurityHandler.mockClear()
-
             routes.push(
                 {
                     name: 'test-write-service',
@@ -221,20 +217,11 @@ describe('proxy', () => {
                 hostname: 'api-gateway',
             }
 
-            // mock security module
-            SecurityHandler.mockImplementation(() => ({
-                process: () => ({
-                    error: 'error',
-                    message: 'invalid token',
-                    result: false,
-                }),
-            }))
-
             const result = await service(req)
 
             expect(result).toEqual({
-                error: 'error',
-                message: 'invalid token',
+                error: 'UNATHORIZED',
+                message: 'unauthorized',
             })
         })
     })

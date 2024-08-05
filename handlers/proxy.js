@@ -1,5 +1,5 @@
 const service = require('../services/proxy')
-const { errors: securityErrors } = require('../filters/security')
+const { errors: securityErrors } = require('../processors/security')
 
 /**
  * Proxy handler

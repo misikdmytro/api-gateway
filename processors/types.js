@@ -6,11 +6,6 @@
  */
 
 /**
- * @typedef {Context}
- * @property {string} authorization
- */
-
-/**
  * @typedef {Route}
  * @property {object} security
  * @property {string} security.scope
