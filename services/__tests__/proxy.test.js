@@ -2,8 +2,10 @@ const { v4: uuidv4 } = require('uuid')
 const fetch = require('node-fetch')
 const service = require('../proxy.js')
 const routes = require('../../routes/routes.json')
+const SecurityHandler = require('../../filters/security')
 
 jest.mock('node-fetch')
+jest.mock('../../filters/security')
 
 describe('proxy', () => {
     describe('when no route is found', () => {
@@ -40,6 +42,8 @@ describe('proxy', () => {
 
     describe('when a route is found', () => {
         beforeEach(() => {
+            SecurityHandler.mockClear()
+
             routes.push(
                 {
                     name: 'test-write-service',
@@ -60,11 +64,25 @@ describe('proxy', () => {
                     },
                     target: 'https://api.read.example.com',
                     timeout: 1000,
+                },
+                {
+                    name: 'secure-service',
+                    methods: ['GET'],
+                    context: ['/secure'],
+                    pathRewrite: {
+                        '^/secure': '/api',
+                    },
+                    target: 'https://api.secure.example.com',
+                    timeout: 1000,
+                    security: {
+                        scope: 'secure',
+                    },
                 }
             )
         })
 
         afterEach(() => {
+            routes.pop()
             routes.pop()
             routes.pop()
         })
@@ -182,6 +200,41 @@ describe('proxy', () => {
                         timeout: 1000,
                     }
                 )
+            })
+        })
+
+        it('should return UNATHORIZED when the token is invalid', async () => {
+            const req = {
+                id: uuidv4(),
+                path: '/secure/1',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer invalid-token',
+                },
+                body: JSON.stringify({}),
+                ip: '10.0.0.1',
+                protocol: 'https',
+                socket: {
+                    localPort: 443,
+                },
+                hostname: 'api-gateway',
+            }
+
+            // mock security module
+            SecurityHandler.mockImplementation(() => ({
+                process: () => ({
+                    error: 'error',
+                    message: 'invalid token',
+                    result: false,
+                }),
+            }))
+
+            const result = await service(req)
+
+            expect(result).toEqual({
+                error: 'error',
+                message: 'invalid token',
             })
         })
     })
