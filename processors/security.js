@@ -93,7 +93,12 @@ class SecurityProcessor {
             }
         }
 
-        return { result: true }
+        const headers = {
+            'X-Client-Id': client.client_id,
+            'X-Client-Name': client.client_name,
+        }
+
+        return { result: true, headers }
     }
 }
 

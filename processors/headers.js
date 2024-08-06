@@ -33,7 +33,7 @@ module.exports = class HeadersProcessor {
         var reqHeaders = {}
 
         for (const [key, value] of Object.entries(headers)) {
-            if (key === 'authorization') {
+            if (key === 'authorization' && this.__route.security) {
                 // skip
                 continue
             }
