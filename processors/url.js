@@ -24,8 +24,10 @@ module.exports = class UrlProcessor {
         )
 
         return {
-            result: true,
-            url: `${target}${servicePath}`,
+            context: {
+                url: `${target}${servicePath}`,
+                method: this.__req.method,
+            },
         }
     }
 }

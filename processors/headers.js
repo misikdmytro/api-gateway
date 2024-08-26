@@ -42,20 +42,21 @@ module.exports = class HeadersProcessor {
         }
 
         return {
-            result: true,
-            headers: {
-                ...reqHeaders,
-                'X-Forwarded-For': ip,
-                'X-Forwarded-Proto': protocol,
-                'X-Forwarded-Port': socket.localPort,
-                'X-Forwarded-Host': hostname,
-                'X-Forwarded-Path': baseUrl,
-                'X-Forwarded-Method': method,
-                'X-Forwarded-Url': originalUrl,
+            context: {
+                headers: {
+                    ...reqHeaders,
+                    'X-Forwarded-For': ip,
+                    'X-Forwarded-Proto': protocol,
+                    'X-Forwarded-Port': socket.localPort,
+                    'X-Forwarded-Host': hostname,
+                    'X-Forwarded-Path': baseUrl,
+                    'X-Forwarded-Method': method,
+                    'X-Forwarded-Url': originalUrl,
 
-                'X-Forfarded-By': 'api-gateway',
-                'X-Forwarded-Name': name,
-                'X-Request-Id': id,
+                    'X-Forfarded-By': 'api-gateway',
+                    'X-Forwarded-Name': name,
+                    'X-Request-Id': id,
+                },
             },
         }
     }

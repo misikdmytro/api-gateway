@@ -7,7 +7,7 @@ jest.mock('node-fetch')
 
 describe('proxy', () => {
     describe('when no route is found', () => {
-        it('should return ROUTE_NOT_FOUND when no route is found', async () => {
+        it('should return route_not_found when no route is found', async () => {
             const req = {
                 path: '/not-found',
             }
@@ -15,14 +15,19 @@ describe('proxy', () => {
             const result = await service(req)
 
             expect(result).toEqual({
-                error: 'ROUTE_NOT_FOUND',
-                message: 'route not found',
+                response: {
+                    status: 404,
+                    body: {
+                        error: 'route_not_found',
+                        message: 'route not found',
+                    },
+                },
             })
 
             expect(fetch).not.toHaveBeenCalled()
         })
 
-        it('should return ROUTE_NOT_FOUND when the route is internal', async () => {
+        it('should return route_not_found when the route is internal', async () => {
             const req = {
                 path: '/clients',
             }
@@ -30,8 +35,13 @@ describe('proxy', () => {
             const result = await service(req)
 
             expect(result).toEqual({
-                error: 'ROUTE_NOT_FOUND',
-                message: 'route not found',
+                response: {
+                    status: 404,
+                    body: {
+                        error: 'route_not_found',
+                        message: 'route not found',
+                    },
+                },
             })
 
             expect(fetch).not.toHaveBeenCalled()
@@ -220,8 +230,16 @@ describe('proxy', () => {
             const result = await service(req)
 
             expect(result).toEqual({
-                error: 'UNATHORIZED',
-                message: 'unauthorized',
+                response: {
+                    status: 401,
+                    body: {
+                        error: 'unauthorized',
+                        message: 'missing authorization header',
+                    },
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                },
             })
         })
     })

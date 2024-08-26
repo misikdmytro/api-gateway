@@ -1,10 +1,10 @@
 /**
  * @typedef {Result}
- * @property {boolean} result
- * @property {object} headers
- * @property {string} url
- * @property {object} body
  * @property {object} context
+ * @property {string} context.url
+ * @property {string} context.method
+ * @property {string} context.body
+ * @property {object} context.headers
  * @property {object} response
  * @property {number} response.status
  * @property {object} response.body

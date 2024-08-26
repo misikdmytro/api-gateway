@@ -21,24 +21,21 @@ module.exports = class ChainProcessor {
      * @returns {Result}
      */
     async process() {
-        const res = { result: true, response: {} }
         let context = {}
 
         for (const processor of this.processors) {
             const result = await processor.process(context)
-            if (!result.result) {
-                return result
+            if (result.response) {
+                return { reponse: result.response }
             }
 
-            context = { ...context, ...result.context }
-
-            res.headers = { ...res.headers, ...result.headers }
-            res.url = result.url ?? res.url
-            res.body = result.body ?? res.body
-
-            res.response.headers = { ...res.response.headers, ...result.response?.headers }
+            context = {
+                ...context,
+                ...result.context,
+                headers: { ...context.headers, ...result.context?.headers },
+            }
         }
 
-        return res
+        return { response: { status: 500 } }
     }
 }

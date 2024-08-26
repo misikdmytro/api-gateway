@@ -15,9 +15,9 @@ module.exports = class BodyProcessor {
     process() {
         const { body, method } = this.__req
         if (method === 'GET' || method === 'HEAD') {
-            return { result: true }
+            return {}
         }
 
-        return { result: true, body }
+        return { context: { body } }
     }
 }

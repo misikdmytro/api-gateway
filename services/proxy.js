@@ -1,19 +1,12 @@
-const fetch = require('node-fetch')
-
 const ChainProcessor = require('../processors/chain')
 const SecurityProcessor = require('../processors/security')
 const HeadersProcessor = require('../processors/headers')
 const BodyProcessor = require('../processors/body')
 const UrlProcessor = require('../processors/url')
 const LimiterProcessor = require('../processors/limiter')
+const ExecutorProcessor = require('../processors/executor')
 
 const routes = require('../routes/routes.json')
-
-const errors = {
-    ROUTE_NOT_FOUND: 'ROUTE_NOT_FOUND',
-}
-
-const defaultTimeout = parseInt(process.env.HTTP_DEFAULT_TIMEOUT) || 5000
 
 /**
  * @typedef {import('node-fetch').Response} Response
@@ -27,7 +20,7 @@ const defaultTimeout = parseInt(process.env.HTTP_DEFAULT_TIMEOUT) || 5000
  * @param {Request} req
  * @returns {Promise<Result>}
  */
-async function handler(req) {
+module.exports = function handler(req) {
     const { path, method } = req
 
     const route = routes.find(
@@ -37,43 +30,29 @@ async function handler(req) {
     )
     if (!route || route?.internal) {
         return {
-            error: errors.ROUTE_NOT_FOUND,
-            message: 'route not found',
+            response: {
+                status: 404,
+                body: {
+                    error: 'route_not_found',
+                    message: 'route not found',
+                },
+            },
         }
     }
 
     const chain = new ChainProcessor()
+    chain.add(new HeadersProcessor(route, req))
     chain.add(new BodyProcessor(req))
     chain.add(new UrlProcessor(route, req))
-    chain.add(new HeadersProcessor(route, req))
     if (route.security) {
         chain.add(new SecurityProcessor(route, req))
     }
     if (route.limits) {
         chain.add(new LimiterProcessor(route))
     }
+    chain.add(new ExecutorProcessor(route))
 
-    const processorResult = await chain.process({
+    return chain.process({
         authorization: req.headers.authorization,
     })
-    if (!processorResult.result) {
-        return {
-            response: processorResult.response,
-        }
-    }
-
-    const response = await fetch(processorResult.url, {
-        method,
-        headers: processorResult.headers,
-        body: processorResult.body,
-        follow: 0,
-        timeout: route?.timeout || defaultTimeout,
-    })
-
-    return {
-        response,
-    }
 }
-
-module.exports = handler
-module.exports.errors = errors

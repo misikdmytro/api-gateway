@@ -18,27 +18,29 @@ module.exports = class LimiterProcessor {
         const { limits } = this.__route
 
         for (const [type, { rate, window }] of Object.entries(limits)) {
+            let handler
             if (type === 'client') {
-                const result = await this.__handleClientRateLimit(context, rate, window)
-                if (result) {
-                    return result
-                }
+                handler = this.__handleClientRateLimit.bind(this)
             } else if (type === 'overall') {
-                const result = await this.__handleOverallRateLimit(rate, window)
-                if (result) {
-                    return result
-                }
+                handler = this.__handleOverallRateLimit.bind(this)
             } else {
                 return {
-                    result: false,
                     response: {
                         status: 500,
                         body: {
                             error: 'internal_server_error',
                             message: 'unsupported rate limit type',
-                        }
-                    }
+                        },
+                        headers: {
+                            'content-type': 'application/json',
+                        },
+                    },
                 }
+            }
+
+            const result = await handler(context, rate, window)
+            if (!result.result) {
+                return result
             }
         }
 
@@ -49,14 +51,16 @@ module.exports = class LimiterProcessor {
         const client = context.client
         if (!client) {
             return {
-                result: false,
                 response: {
                     status: 401,
                     body: {
                         error: 'unauthorized',
                         message: 'missing client context',
-                    }
-                }
+                    },
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                },
             }
         }
 
@@ -68,10 +72,15 @@ module.exports = class LimiterProcessor {
         const res = await cl.incr(key)
         const current = res.valueOf()
         if (current > rate) {
-            return this.__buildRateLimitExceededResponse('client', rate, reset, after)
+            return this.__buildRateLimitExceededResponse(
+                'client',
+                rate,
+                reset,
+                after
+            )
         }
 
-        return this.__buildSuccessfulResponse(reset, rate - current)
+        return this.__buildSuccessfulResponse()
     }
 
     async __handleOverallRateLimit(rate, window) {
@@ -83,10 +92,15 @@ module.exports = class LimiterProcessor {
         const res = await cl.incr(key)
         const current = res.valueOf()
         if (current > rate) {
-            return this.__buildRateLimitExceededResponse('overall', rate, reset, after)
+            return this.__buildRateLimitExceededResponse(
+                'overall',
+                rate,
+                reset,
+                after
+            )
         }
 
-        return this.__buildSuccessfulResponse(reset, rate - current)
+        return this.__buildSuccessfulResponse()
     }
 
     __getTimeWindow(window) {
@@ -100,28 +114,25 @@ module.exports = class LimiterProcessor {
 
     __buildRateLimitExceededResponse(type, rate, reset, after) {
         return {
-            status: 429,
-            headers: {
-                'X-RateLimit-Type': type,
-                'X-RateLimit-Limit': rate,
-                'X-RateLimit-Remaining': 0,
-                'X-RateLimit-Reset': reset,
-                'Retry-After': after,
+            response: {
+                status: 429,
+                headers: {
+                    'content-type': 'application/json',
+                    'X-RateLimit-Type': type,
+                    'X-RateLimit-Limit': rate,
+                    'X-RateLimit-Remaining': 0,
+                    'X-RateLimit-Reset': reset,
+                    'Retry-After': after,
+                },
+                body: {
+                    error: 'rate_limit_exceeded',
+                    message: 'rate limit exceeded',
+                },
             },
-            body: {
-                error: 'rate_limit_exceeded',
-                message: 'rate limit exceeded',
-            }
         }
     }
 
-    __buildSuccessfulResponse(reset, remaining) {
-        return {
-            status: 200,
-            headers: {
-                'X-RateLimit-Remaining': remaining,
-                'X-RateLimit-Reset': reset,
-            }
-        }
+    __buildSuccessfulResponse() {
+        return {}
     }
 }

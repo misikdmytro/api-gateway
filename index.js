@@ -5,7 +5,6 @@ const { launch } = require('./cache/clients')
 const dotenv = require('dotenv')
 dotenv.config()
 
-
 async function run() {
     await launch()
 

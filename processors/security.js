@@ -27,28 +27,32 @@ module.exports = class SecurityProcessor {
         // get bearer token
         if (!authorization) {
             return {
-                result: false,
                 response: {
                     status: 401,
                     body: {
                         error: 'unauthorized',
                         message: 'missing authorization header',
                     },
-                }
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                },
             }
         }
 
         const [bearer, token] = authorization.split(' ')
         if (bearer !== 'Bearer') {
             return {
-                result: false,
                 response: {
                     status: 401,
                     body: {
                         error: 'unauthorized',
                         message: 'invalid authorization header',
-                    }
-                }
+                    },
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                },
             }
         }
 
@@ -58,14 +62,16 @@ module.exports = class SecurityProcessor {
             decoded = jwtDecode(token)
         } catch {
             return {
-                result: false,
                 response: {
                     status: 401,
                     body: {
                         error: 'unauthorized',
                         message: 'invalid token',
-                    }
-                }
+                    },
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                },
             }
         }
 
@@ -75,14 +81,16 @@ module.exports = class SecurityProcessor {
         )
         if (!client) {
             return {
-                result: false,
                 response: {
                     status: 401,
                     body: {
                         error: 'unauthorized',
                         message: 'client not found',
-                    }
-                }
+                    },
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                },
             }
         }
 
@@ -93,28 +101,32 @@ module.exports = class SecurityProcessor {
             claims = jwt.verify(token, signingKey)
         } catch {
             return {
-                result: false,
                 response: {
                     status: 401,
                     body: {
                         error: 'unauthorized',
                         message: 'invalid token',
-                    }
-                }
+                    },
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                },
             }
         }
 
         // verify scope
         if (!claims.scope.includes(scope)) {
             return {
-                result: false,
                 response: {
                     status: 403,
                     body: {
                         error: 'forbidden',
                         message: 'insufficient scope',
-                    }
-                }
+                    },
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                },
             }
         }
 
@@ -123,6 +135,6 @@ module.exports = class SecurityProcessor {
             'X-Client-Name': client.client_name,
         }
 
-        return { result: true, headers, context: { client } }
+        return { context: { client, headers } }
     }
 }
