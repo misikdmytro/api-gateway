@@ -5,6 +5,7 @@ const SecurityProcessor = require('../processors/security')
 const HeadersProcessor = require('../processors/headers')
 const BodyProcessor = require('../processors/body')
 const UrlProcessor = require('../processors/url')
+const LimiterProcessor = require('../processors/limiter')
 
 const routes = require('../routes/routes.json')
 
@@ -17,8 +18,6 @@ const defaultTimeout = parseInt(process.env.HTTP_DEFAULT_TIMEOUT) || 5000
 /**
  * @typedef {import('node-fetch').Response} Response
  * @typedef Result
- * @property {string} error
- * @property {string} message
  * @property {Response} response
  */
 
@@ -50,14 +49,16 @@ async function handler(req) {
     if (route.security) {
         chain.add(new SecurityProcessor(route, req))
     }
+    if (route.limits) {
+        chain.add(new LimiterProcessor(route))
+    }
 
-    const processorResult = chain.process({
+    const processorResult = await chain.process({
         authorization: req.headers.authorization,
     })
     if (!processorResult.result) {
         return {
-            error: processorResult.error,
-            message: processorResult.message,
+            response: processorResult.response,
         }
     }
 

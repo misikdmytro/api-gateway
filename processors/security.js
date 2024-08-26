@@ -2,12 +2,7 @@ const { getClients } = require('../cache/clients')
 const { jwtDecode } = require('jwt-decode')
 const jwt = require('jsonwebtoken')
 
-const errors = {
-    UNATHORIZED: 'UNATHORIZED',
-    FORBIDDEN: 'FORBIDDEN',
-}
-
-class SecurityProcessor {
+module.exports = class SecurityProcessor {
     /**
      * Creates a new security handler
      * @typedef {import('./types').Route} Route
@@ -32,18 +27,28 @@ class SecurityProcessor {
         // get bearer token
         if (!authorization) {
             return {
-                error: errors.UNATHORIZED,
-                message: 'unauthorized',
                 result: false,
+                response: {
+                    status: 401,
+                    body: {
+                        error: 'unauthorized',
+                        message: 'missing authorization header',
+                    },
+                }
             }
         }
 
         const [bearer, token] = authorization.split(' ')
         if (bearer !== 'Bearer') {
             return {
-                error: errors.UNATHORIZED,
-                message: 'unauthorized',
                 result: false,
+                response: {
+                    status: 401,
+                    body: {
+                        error: 'unauthorized',
+                        message: 'invalid authorization header',
+                    }
+                }
             }
         }
 
@@ -53,9 +58,14 @@ class SecurityProcessor {
             decoded = jwtDecode(token)
         } catch {
             return {
-                error: errors.UNATHORIZED,
-                message: 'invalid token',
                 result: false,
+                response: {
+                    status: 401,
+                    body: {
+                        error: 'unauthorized',
+                        message: 'invalid token',
+                    }
+                }
             }
         }
 
@@ -65,9 +75,14 @@ class SecurityProcessor {
         )
         if (!client) {
             return {
-                error: errors.UNATHORIZED,
-                message: 'client not found',
                 result: false,
+                response: {
+                    status: 401,
+                    body: {
+                        error: 'unauthorized',
+                        message: 'client not found',
+                    }
+                }
             }
         }
 
@@ -78,18 +93,28 @@ class SecurityProcessor {
             claims = jwt.verify(token, signingKey)
         } catch {
             return {
-                error: errors.UNATHORIZED,
-                message: 'invalid token',
                 result: false,
+                response: {
+                    status: 401,
+                    body: {
+                        error: 'unauthorized',
+                        message: 'invalid token',
+                    }
+                }
             }
         }
 
         // verify scope
         if (!claims.scope.includes(scope)) {
             return {
-                error: errors.FORBIDDEN,
-                message: 'insufficient scope',
                 result: false,
+                response: {
+                    status: 403,
+                    body: {
+                        error: 'forbidden',
+                        message: 'insufficient scope',
+                    }
+                }
             }
         }
 
@@ -98,9 +123,6 @@ class SecurityProcessor {
             'X-Client-Name': client.client_name,
         }
 
-        return { result: true, headers }
+        return { result: true, headers, context: { client } }
     }
 }
-
-module.exports = SecurityProcessor
-module.exports.errors = errors

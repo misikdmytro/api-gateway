@@ -16,6 +16,7 @@
         "jsonwebtoken": "^9.0.2",
         "jwt-decode": "^4.0.0",
         "node-fetch": "2.7.0",
+        "redis": "^4.7.0",
         "uuid": "^10.0.0",
         "winston": "^3.13.1"
     },

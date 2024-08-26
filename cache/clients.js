@@ -5,12 +5,12 @@ async function refreshClients() {
     clients = await getClients()
 }
 
-exports.launch = () => {
+exports.launch = async () => {
     const refreshInterval =
         process.env.CLIENTS_REFRESH_INTERVAL || 1000 * 60 * 5
 
+    await refreshClients()
     setInterval(refreshClients, refreshInterval)
-    refreshClients()
 }
 
 /**

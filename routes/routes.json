@@ -24,6 +24,16 @@
         "pathRewrite": {},
         "security": {
             "scope": "user:read"
+        },
+        "limits": {
+            "client": {
+                "rate": 10,
+                "window": 60
+            },
+            "overall": {
+                "rate": 100,
+                "window": 60
+            }
         }
     },
     {
@@ -34,6 +44,16 @@
         "pathRewrite": {},
         "security": {
             "scope": "user:write"
+        },
+        "limits": {
+            "client": {
+                "rate": 5,
+                "window": 60
+            },
+            "overall": {
+                "rate": 50,
+                "window": 60
+            }
         }
     }
 ]

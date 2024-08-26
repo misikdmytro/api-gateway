@@ -20,18 +20,23 @@ module.exports = class ChainProcessor {
      * @typedef {import('./types').Result} Result
      * @returns {Result}
      */
-    process() {
-        const res = { result: true }
+    async process() {
+        const res = { result: true, response: {} }
+        let context = {}
 
         for (const processor of this.processors) {
-            const result = processor.process()
+            const result = await processor.process(context)
             if (!result.result) {
                 return result
             }
 
+            context = { ...context, ...result.context }
+
             res.headers = { ...res.headers, ...result.headers }
             res.url = result.url ?? res.url
             res.body = result.body ?? res.body
+
+            res.response.headers = { ...res.response.headers, ...result.response?.headers }
         }
 
         return res
