@@ -8,20 +8,10 @@
             "name": "Debug Application",
             "type": "node",
             "request": "launch",
-            "skipFiles": ["<node_internals>/**"],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
             "program": "${workspaceFolder}/index.js"
-        },
-        {
-            "name": "Debug Tests",
-            "type": "node",
-            "request": "launch",
-            "program": "${workspaceFolder}/node_modules/.bin/jest",
-            "args": ["${fileBasenameNoExtension}"],
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen",
-            "windows": {
-                "program": "${workspaceFolder}/node_modules/jest/bin/jest"
-            }
         }
     ]
 }

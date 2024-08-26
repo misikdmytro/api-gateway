@@ -26,7 +26,7 @@ module.exports = class ChainProcessor {
         for (const processor of this.processors) {
             const result = await processor.process(context)
             if (result.response) {
-                return { reponse: result.response }
+                return { response: result.response }
             }
 
             context = {
