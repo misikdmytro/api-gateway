@@ -7,12 +7,16 @@ This project is a custom API Gateway built using Node.js and Express.The impleme
 Currently implemented features:
 
 -   routing
+-   authentication
+-   authorization
+-   rate limiting
 
 ## Installation
 
 1. Clone the repository
 2. Run `yarn install` to install the dependencies
-3. Run `yarn start` to start the server on port 3000
+3. Start Redis server with `docker compose up -d redis`
+4. Run `yarn start` to start the server on port 3000
 
 ## Testing
 
