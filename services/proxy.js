@@ -52,7 +52,7 @@ module.exports = function handler(req) {
         chain.add(new LimiterProcessor(route))
     }
     if (route.cache) {
-        chain.add(new CacheProcessor(route))
+        chain.add(new CacheProcessor(route, req))
     }
     chain.add(new ExecutorProcessor(route))
 

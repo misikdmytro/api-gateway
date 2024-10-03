@@ -1,6 +1,7 @@
 const { getClients } = require('../cache/clients')
 const { jwtDecode } = require('jwt-decode')
 const jwt = require('jsonwebtoken')
+const { stringifyToBuffer } = require('../utils')
 
 module.exports = class SecurityProcessor {
     /**
@@ -29,10 +30,10 @@ module.exports = class SecurityProcessor {
             return {
                 response: {
                     status: 401,
-                    body: {
+                    content: stringifyToBuffer({
                         error: 'unauthorized',
                         message: 'missing authorization header',
-                    },
+                    }),
                     headers: {
                         'content-type': 'application/json',
                     },
@@ -45,10 +46,10 @@ module.exports = class SecurityProcessor {
             return {
                 response: {
                     status: 401,
-                    body: {
+                    content: stringifyToBuffer({
                         error: 'unauthorized',
                         message: 'invalid authorization header',
-                    },
+                    }),
                     headers: {
                         'content-type': 'application/json',
                     },
@@ -64,10 +65,10 @@ module.exports = class SecurityProcessor {
             return {
                 response: {
                     status: 401,
-                    body: {
+                    content: stringifyToBuffer({
                         error: 'unauthorized',
                         message: 'invalid token',
-                    },
+                    }),
                     headers: {
                         'content-type': 'application/json',
                     },
@@ -83,10 +84,10 @@ module.exports = class SecurityProcessor {
             return {
                 response: {
                     status: 401,
-                    body: {
+                    content: stringifyToBuffer({
                         error: 'unauthorized',
                         message: 'client not found',
-                    },
+                    }),
                     headers: {
                         'content-type': 'application/json',
                     },
@@ -103,10 +104,10 @@ module.exports = class SecurityProcessor {
             return {
                 response: {
                     status: 401,
-                    body: {
+                    content: stringifyToBuffer({
                         error: 'unauthorized',
                         message: 'invalid token',
-                    },
+                    }),
                     headers: {
                         'content-type': 'application/json',
                     },
@@ -119,10 +120,10 @@ module.exports = class SecurityProcessor {
             return {
                 response: {
                     status: 403,
-                    body: {
+                    content: stringifyToBuffer({
                         error: 'forbidden',
                         message: 'insufficient scope',
-                    },
+                    }),
                     headers: {
                         'content-type': 'application/json',
                     },

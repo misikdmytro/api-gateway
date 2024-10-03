@@ -110,12 +110,15 @@ describe('proxy', () => {
                 hostname: 'api-gateway',
             }
 
+            const content = Buffer.from(JSON.stringify({}), 'utf-8')
             const response = {
                 status: 200,
                 headers: {
-                    'Content-Type': 'application/json',
+                    forEach: (cb) => {
+                        cb('application/json', 'Content-Type')
+                    }
                 },
-                body: JSON.stringify({}),
+                buffer: async () => content,
             }
 
             fetch.mockResolvedValue(response)
@@ -123,7 +126,13 @@ describe('proxy', () => {
             const result = await service(req)
 
             expect(result).toEqual({
-                response,
+                response: {
+                    status: response.status,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    content: content,
+                }
             })
 
             expect(fetch).toHaveBeenCalledWith(
@@ -169,12 +178,15 @@ describe('proxy', () => {
                     hostname: 'api-gateway',
                 }
 
+                const content = Buffer.from(JSON.stringify({}), 'utf-8')
                 const response = {
                     status: 200,
                     headers: {
-                        'Content-Type': 'application/json',
+                        forEach: (cb) => {
+                            cb('application/json', 'Content-Type')
+                        }
                     },
-                    body: JSON.stringify({}),
+                    buffer: async () => content,
                 }
 
                 fetch.mockResolvedValue(response)
@@ -182,7 +194,13 @@ describe('proxy', () => {
                 const result = await service(req)
 
                 expect(result).toEqual({
-                    response,
+                    response: {
+                        status: response.status,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        content: content,
+                    }
                 })
 
                 expect(fetch).toHaveBeenCalledWith(
@@ -227,15 +245,17 @@ describe('proxy', () => {
                 hostname: 'api-gateway',
             }
 
+            const content = Buffer.from(JSON.stringify({
+                error: 'unauthorized',
+                message: 'missing authorization header',
+            }), 'utf-8')
+
             const result = await service(req)
 
             expect(result).toEqual({
                 response: {
                     status: 401,
-                    body: {
-                        error: 'unauthorized',
-                        message: 'missing authorization header',
-                    },
+                    content,
                     headers: {
                         'content-type': 'application/json',
                     },

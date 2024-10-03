@@ -15,23 +15,12 @@ module.exports = async (req, res, next) => {
 
         res.status(response.status)
         if (response.headers) {
-            if (typeof response.headers.forEach === 'function') {
-                response.headers.forEach((value, key) =>
-                    res.setHeader(key, value)
-                )
-            } else {
-                Object.entries(response.headers).forEach(([key, value]) =>
-                    res.setHeader(key, value)
-                )
-            }
+            Object.entries(response.headers).forEach(([key, value]) =>
+                res.setHeader(key, value)
+            )
         }
 
-        if (response.buffer && typeof response.buffer === 'function') {
-            const content = await response.buffer()
-            res.send(content)
-        } else if (response.body) {
-            res.json(response.body)
-        }
+        res.send(response.content)
     } catch (err) {
         next(err)
     }
