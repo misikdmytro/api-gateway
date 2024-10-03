@@ -1,4 +1,4 @@
-const { getRedisClient } = require('../clients/limiter')
+const { getRedisClient } = require('../clients/cache')
 
 module.exports = class LimiterProcessor {
     /**

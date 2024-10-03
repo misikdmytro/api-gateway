@@ -5,7 +5,10 @@
         "context": ["/clients"],
         "target": "http://localhost:3002",
         "pathRewrite": {},
-        "internal": true
+        "internal": true,
+        "cache": {
+            "ttl": 60
+        }
     },
     {
         "name": "auth-service",
@@ -34,6 +37,10 @@
                 "rate": 100,
                 "window": 60
             }
+        },
+        "cache": {
+            "ttl": 60,
+            "keyPattern": "/users/:id"
         }
     },
     {

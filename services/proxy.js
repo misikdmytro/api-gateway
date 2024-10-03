@@ -5,6 +5,7 @@ const BodyProcessor = require('../processors/body')
 const UrlProcessor = require('../processors/url')
 const LimiterProcessor = require('../processors/limiter')
 const ExecutorProcessor = require('../processors/executor')
+const CacheProcessor = require('../processors/cache')
 
 const routes = require('../routes/routes.json')
 
@@ -49,6 +50,9 @@ module.exports = function handler(req) {
     }
     if (route.limits) {
         chain.add(new LimiterProcessor(route))
+    }
+    if (route.cache) {
+        chain.add(new CacheProcessor(route))
     }
     chain.add(new ExecutorProcessor(route))
 
