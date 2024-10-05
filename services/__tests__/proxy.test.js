@@ -116,7 +116,7 @@ describe('proxy', () => {
                 headers: {
                     forEach: (cb) => {
                         cb('application/json', 'Content-Type')
-                    }
+                    },
                 },
                 buffer: async () => content,
             }
@@ -132,7 +132,7 @@ describe('proxy', () => {
                         'Content-Type': 'application/json',
                     },
                     content: content,
-                }
+                },
             })
 
             expect(fetch).toHaveBeenCalledWith(
@@ -184,7 +184,7 @@ describe('proxy', () => {
                     headers: {
                         forEach: (cb) => {
                             cb('application/json', 'Content-Type')
-                        }
+                        },
                     },
                     buffer: async () => content,
                 }
@@ -200,7 +200,7 @@ describe('proxy', () => {
                             'Content-Type': 'application/json',
                         },
                         content: content,
-                    }
+                    },
                 })
 
                 expect(fetch).toHaveBeenCalledWith(
@@ -245,10 +245,13 @@ describe('proxy', () => {
                 hostname: 'api-gateway',
             }
 
-            const content = Buffer.from(JSON.stringify({
-                error: 'unauthorized',
-                message: 'missing authorization header',
-            }), 'utf-8')
+            const content = Buffer.from(
+                JSON.stringify({
+                    error: 'unauthorized',
+                    message: 'missing authorization header',
+                }),
+                'utf-8'
+            )
 
             const result = await service(req)
 

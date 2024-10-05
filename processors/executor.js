@@ -28,9 +28,7 @@ module.exports = class ExecutorProcessor {
 
         const content = await response.buffer()
         const headers = {}
-        response.headers.forEach((value, key) =>
-            headers[key] = value
-        )
+        response.headers.forEach((value, key) => (headers[key] = value))
 
         return { response: { content, headers, status: response.status } }
     }

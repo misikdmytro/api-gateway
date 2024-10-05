@@ -34,7 +34,10 @@ module.exports = class ChainProcessor {
             if (result.response) {
                 for (const postProcessor of this.processors) {
                     if (postProcessor.postProcess) {
-                        await postProcessor.postProcess(context, result.response)
+                        await postProcessor.postProcess(
+                            context,
+                            result.response
+                        )
                     }
                 }
 

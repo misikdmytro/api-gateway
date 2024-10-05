@@ -43,7 +43,11 @@ module.exports = class CacheProcessor {
 
             if (response.status >= 200 && response.status < 300) {
                 const cl = await getRedisClient()
-                await cl.setEx(this.__buildKey(), cache.ttl, JSON.stringify(response))
+                await cl.setEx(
+                    this.__buildKey(),
+                    cache.ttl,
+                    JSON.stringify(response)
+                )
             }
         }
     }
