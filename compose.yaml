@@ -1,7 +1,7 @@
 services:
   app:
     build:
-      context: ./api-gateway
+      context: ./gateway
       dockerfile: Dockerfile
     ports:
       - 8081:3000
@@ -10,7 +10,7 @@ services:
       - LOKI_URL=http://loki:3100
       - TEMPO_URL=http://tempo:9411   
     volumes:
-      - ./api-gateway/routes/docker.json:/app/routes/routes.json
+      - ./gateway/routes/docker.json:/app/routes/routes.json
 
   auth:
     build:
@@ -35,6 +35,7 @@ services:
     image: prom/prometheus:latest
     volumes:
       - ./conf/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
     ports:
       - 9090:9090
 
@@ -69,3 +70,4 @@ networks:
 
 volumes:
   grafana-data:
+  prometheus-data:

@@ -18,6 +18,7 @@ module.exports = winston.createLogger({
         new LokiTransport({
             host: process.env.LOKI_URL || 'http://localhost:3100',
             json: true,
+            labels: { service: 'api-gateway' },
         }),
     ],
 })

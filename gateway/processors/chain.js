@@ -23,25 +23,33 @@ module.exports = class ChainProcessor {
     async process() {
         let context = {}
 
-        for (const processor of this.processors) {
-            const result = await processor.process(context)
-            context = {
-                ...context,
-                ...result.context,
-                headers: { ...context.headers, ...result.context?.headers },
-            }
-
-            if (result.response) {
-                for (const postProcessor of this.processors) {
-                    if (postProcessor.postProcess) {
-                        await postProcessor.postProcess(
-                            context,
-                            result.response
-                        )
-                    }
+        try {
+            for (const processor of this.processors) {
+                const result = await processor.process(context)
+                context = {
+                    ...context,
+                    ...result.context,
+                    headers: { ...context.headers, ...result.context?.headers },
                 }
 
-                return { response: result.response }
+                if (result.response) {
+                    for (const postProcessor of this.processors) {
+                        if (postProcessor.postProcess) {
+                            await postProcessor.postProcess(
+                                context,
+                                result.response
+                            )
+                        }
+                    }
+
+                    return { response: result.response }
+                }
+            }
+        } catch (error) {
+            for (const processor of this.processors) {
+                if (processor.handleError) {
+                    await processor.handleError(error, context)
+                }
             }
         }
 
