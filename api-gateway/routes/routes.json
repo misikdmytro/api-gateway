@@ -39,8 +39,7 @@
             }
         },
         "cache": {
-            "ttl": 60,
-            "keyPattern": "/users/:id"
+            "ttl": 60
         }
     },
     {

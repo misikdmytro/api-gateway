@@ -23,8 +23,13 @@ module.exports = class CacheProcessor {
 
         const cachedResponse = await cl.get(this.__buildKey())
         if (cachedResponse) {
-            return { response: cachedResponse }
+            const response = JSON.parse(cachedResponse)
+            response.content = Buffer.from(response.content.data)
+
+            return { context: { cached: true }, response }
         }
+
+        return {}
     }
 
     /**
@@ -32,19 +37,22 @@ module.exports = class CacheProcessor {
      * @param {import('./types').Response} response
      * @returns {Promise<void>}
      */
-    async postProcess(response) {
-        const { cache } = this.__route
+    async postProcess(context, response) {
+        if (!context.cached) {
+            const { cache } = this.__route
 
-        if (response.status >= 200 && response.status < 300) {
-            const cl = await getRedisClient()
-            await cl.set(this.__buildKey(), response, 'EX', cache.ttl)
+            if (response.status >= 200 && response.status < 300) {
+                const cl = await getRedisClient()
+                await cl.setEx(
+                    this.__buildKey(),
+                    cache.ttl,
+                    JSON.stringify(response)
+                )
+            }
         }
     }
 
     __buildKey() {
-        return Object.entries(this.__req.params).reduce(
-            (acc, [key, value]) => acc.replace(new RegExp(`:${key}`), value),
-            this.__route.cache.keyPattern
-        )
+        return this.__req.originalUrl
     }
 }

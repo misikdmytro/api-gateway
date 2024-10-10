@@ -1,4 +1,5 @@
 const { getRedisClient } = require('../clients/cache')
+const { stringifyToBuffer } = require('../utils')
 
 module.exports = class LimiterProcessor {
     /**
@@ -27,10 +28,10 @@ module.exports = class LimiterProcessor {
                 return {
                     response: {
                         status: 500,
-                        body: {
+                        content: stringifyToBuffer({
                             error: 'internal_server_error',
                             message: 'unsupported rate limit type',
-                        },
+                        }),
                         headers: {
                             'content-type': 'application/json',
                         },
@@ -53,10 +54,10 @@ module.exports = class LimiterProcessor {
             return {
                 response: {
                     status: 401,
-                    body: {
+                    content: stringifyToBuffer({
                         error: 'unauthorized',
                         message: 'missing client context',
-                    },
+                    }),
                     headers: {
                         'content-type': 'application/json',
                     },
@@ -124,10 +125,10 @@ module.exports = class LimiterProcessor {
                     'X-RateLimit-Reset': reset,
                     'Retry-After': after,
                 },
-                body: {
+                content: stringifyToBuffer({
                     error: 'rate_limit_exceeded',
                     message: 'rate limit exceeded',
-                },
+                }),
             },
         }
     }
