@@ -1,0 +1,20 @@
+[
+    {
+        "client_name": "Client 1",
+        "client_id": "d9e723a0-ccc4-49f6-b146-f87ce96197f2",
+        "client_secret": "MI4AmCDLFdGVOqlvyHy9woHSVyUCRAxh",
+        "scopes": [
+            "user:read",
+            "user:write"
+        ],
+        "grant_types": [
+            "client_credentials"
+        ],
+        "redirect_uris": [],
+        "signing_alg": "HS256",
+        "jwks": {
+            "k": "QjJ2djY5QVo4b2R0bzcwTjFxRU40ejRFNkZwYVpBaFU="
+        },
+        "exp": 3600
+    }
+]

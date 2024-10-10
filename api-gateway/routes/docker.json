@@ -1,0 +1,66 @@
+[
+    {
+        "name": "auth-clients-service",
+        "methods": ["GET"],
+        "context": ["/clients"],
+        "target": "http://auth:3002",
+        "pathRewrite": {},
+        "internal": true,
+        "cache": {
+            "ttl": 60
+        }
+    },
+    {
+        "name": "auth-service",
+        "methods": ["POST"],
+        "context": ["/auth"],
+        "target": "http://auth:3002",
+        "pathRewrite": {
+            "^/auth": "/oauth2"
+        }
+    },
+    {
+        "name": "user-service-read",
+        "methods": ["GET"],
+        "context": ["/users"],
+        "target": "http://users:3001",
+        "pathRewrite": {},
+        "security": {
+            "scope": "user:read"
+        },
+        "limits": {
+            "client": {
+                "rate": 10,
+                "window": 60
+            },
+            "overall": {
+                "rate": 100,
+                "window": 60
+            }
+        },
+        "cache": {
+            "ttl": 60,
+            "keyPattern": "/users/:id"
+        }
+    },
+    {
+        "name": "user-service-write",
+        "methods": ["POST", "PUT", "DELETE"],
+        "context": ["/users"],
+        "target": "http://users:3001",
+        "pathRewrite": {},
+        "security": {
+            "scope": "user:write"
+        },
+        "limits": {
+            "client": {
+                "rate": 5,
+                "window": 60
+            },
+            "overall": {
+                "rate": 50,
+                "window": 60
+            }
+        }
+    }
+]
