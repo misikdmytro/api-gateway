@@ -5,14 +5,14 @@ const error = require('../middlewares/error')
 const logger = require('../middlewares/logger')
 const requestId = require('../middlewares/requestid')
 
-client.collectDefaultMetrics({ prefix: 'api_gateway' })
+client.collectDefaultMetrics()
 
 /**
  * Build Express application
  * @param {Function} [callback]
  * @returns {import('express').Express}
  */
-module.exports = (callback = () => {}) => {
+module.exports = (callback = () => { }) => {
     const app = express()
 
     app.use(requestId)
