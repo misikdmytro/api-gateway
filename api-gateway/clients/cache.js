@@ -1,4 +1,5 @@
 const { createClient } = require('redis')
+const logger = require('../logger')
 
 let client
 
@@ -11,9 +12,14 @@ exports.getRedisClient = async () => {
         return client
     }
 
-    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379'
-    client = createClient(redisUrl)
-    await client.connect()
+    try {
+        const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379'
+        client = createClient({ url: redisUrl })
+        await client.connect()
 
-    return client
+        return client
+    } catch (err) {
+        logger.error('Error occurred while connecting to Redis', err)
+        client = undefined
+    }
 }

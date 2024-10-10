@@ -1,34 +1,34 @@
 services:
-    app:
-        build:
-            context: ./api-gateway
-            dockerfile: Dockerfile
-        ports:
-            - '8081:3000'
-        environment:
-            - REDIS_URL=redis://redis:6379
-        volumes:
-            - ./api-gateway/routes/docker.json:/app/routes/routes.json
+  app:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8081:3000"
+    environment:
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - ./api-gateway/routes/docker.json:/app/routes/routes.json
 
-    auth:
-        build:
-            context: ./auth-service
-            dockerfile: Dockerfile
-        ports:
-            - '8082:3002'
+  auth:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:3002"
 
-    users:
-        build:
-            context: ./users-service
-            dockerfile: Dockerfile
-        ports:
-            - '8083:3001'
+  users:
+    build:
+      context: ./users-service
+      dockerfile: Dockerfile
+    ports:
+      - "8083:3001"
 
-    redis:
-        image: 'redis:alpine'
-        ports:
-            - '6379:6379'
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
 
 networks:
-    default:
-        name: app
+  default:
+    name: app
