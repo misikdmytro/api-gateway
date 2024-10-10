@@ -1,0 +1,4 @@
+scrape_configs:
+  - job_name: 'node_app'
+    static_configs:
+      - targets: ['app:3000']

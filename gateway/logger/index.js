@@ -1,4 +1,5 @@
 const winston = require('winston')
+const LokiTransport = require('winston-loki')
 
 /**
  * Logger
@@ -12,5 +13,11 @@ module.exports = winston.createLogger({
         winston.format.json()
     ),
     defaultMeta: { service: 'api-gateway' },
-    transports: [new winston.transports.Console()],
+    transports: [
+        new winston.transports.Console(),
+        new LokiTransport({
+            host: process.env.LOKI_URL || 'http://localhost:3100',
+            json: true,
+        }),
+    ],
 })

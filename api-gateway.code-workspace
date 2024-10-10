@@ -5,8 +5,8 @@
 			"path": "."
 		},
 		{
-			"name": "api-gateway",
-			"path": "api-gateway"
+			"name": "gateway",
+			"path": "gateway"
 		},
 		{
 			"name": "auth-service",

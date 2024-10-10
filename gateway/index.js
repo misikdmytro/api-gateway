@@ -2,6 +2,8 @@ const buildApp = require('./app')
 const logger = require('./logger')
 const { launch } = require('./cache/clients')
 
+require('./traces')
+
 const dotenv = require('dotenv')
 dotenv.config()
 
