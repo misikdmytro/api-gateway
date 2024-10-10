@@ -365,7 +365,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "sum"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
@@ -383,7 +383,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "active_requests",
+          "expr": "sum(active_requests)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "__auto",
