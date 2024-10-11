@@ -12,7 +12,10 @@
     },
     "dependencies": {
         "@opentelemetry/api": "^1.9.0",
-        "@opentelemetry/auto-instrumentations-node": "^0.50.1",
+        "@opentelemetry/exporter-trace-otlp-grpc": "^0.53.0",
+        "@opentelemetry/instrumentation-express": "^0.43.0",
+        "@opentelemetry/instrumentation-http": "^0.53.0",
+        "@opentelemetry/instrumentation-redis-4": "^0.42.1",
         "@opentelemetry/sdk-node": "^0.53.0",
         "dotenv": "^16.4.5",
         "express": "^4.19.2",

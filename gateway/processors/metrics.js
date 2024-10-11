@@ -3,26 +3,33 @@ const client = require('prom-client')
 const requestsTotal = new client.Counter({
     name: 'requests_total',
     help: 'Total number of requests',
-    labelNames: ['method', 'route_name', 'status', 'user_agent', 'ip'],
+    labelNames: [
+        'method',
+        'route_name',
+        'status',
+        'status_category',
+        'user_agent',
+        'ip',
+    ],
 })
 
 const requestDuration = new client.Summary({
     name: 'requests_duration_ms',
     help: 'Duration of requests in ms',
-    labelNames: ['method', 'route_name', 'status'],
+    labelNames: ['method', 'route_name', 'status', 'status_category'],
 })
 
 const requestsDurationHistogram = new client.Histogram({
     name: 'requests_duration_histogram_ms',
     help: 'Duration of requests in ms',
-    labelNames: ['method', 'route_name', 'status'],
+    labelNames: ['method', 'route_name', 'status', 'status_category'],
     buckets: [10, 50, 100, 500, 1000, 5000], // Custom buckets for request duration
 })
 
 const requestsSize = new client.Histogram({
     name: 'outgoing_requests_size_bytes',
     help: 'Size of outgoing requests in bytes',
-    labelNames: ['method', 'route_name', 'status'],
+    labelNames: ['method', 'route_name', 'status', 'status_category'],
     buckets: [512, 1024, 2048, 4096, 8192], // Custom buckets for request size
 })
 
@@ -81,20 +88,37 @@ module.exports = class MetricsProcessor {
         const end = process.hrtime(context.start)
         const durationMs = end[0] * 1000 + end[1] / 1e6
 
+        const statusCategory = this.__toStatusCategory(response.status)
+
         // Record the duration of the request
         requestDuration
-            .labels(this.__req.method, this.__route.name, response.status)
+            .labels(
+                this.__req.method,
+                this.__route.name,
+                response.status,
+                statusCategory
+            )
             .observe(durationMs)
 
         // Record the duration of the request in a histogram
         requestsDurationHistogram
-            .labels(this.__req.method, this.__route.name, response.status)
+            .labels(
+                this.__req.method,
+                this.__route.name,
+                response.status,
+                statusCategory
+            )
             .observe(durationMs)
 
         // Record size of the response
         requestsSize
-            .labels(this.__req.method, this.__route.name, response.status)
-            .observe(Buffer.byteLength(response.body || '', 'utf8'))
+            .labels(
+                this.__req.method,
+                this.__route.name,
+                response.status,
+                statusCategory
+            )
+            .observe(Buffer.byteLength(response.content || '', 'utf8'))
 
         // Update the request count with final status
         requestsTotal
@@ -102,11 +126,28 @@ module.exports = class MetricsProcessor {
                 this.__req.method,
                 this.__route.name,
                 response.status,
+                statusCategory,
                 this.__userAgent,
                 this.__ip
             )
             .inc()
 
         activeRequests.dec() // Decrement active requests gauge after completion
+    }
+
+    __toStatusCategory(status) {
+        if (status >= 200 && status < 300) {
+            return '2xx'
+        }
+
+        if (status >= 300 && status < 400) {
+            return '3xx'
+        }
+
+        if (status >= 400 && status < 500) {
+            return '4xx'
+        }
+
+        return '5xx'
     }
 }

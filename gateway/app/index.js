@@ -2,7 +2,6 @@ const express = require('express')
 const client = require('prom-client')
 
 const error = require('../middlewares/error')
-const logger = require('../middlewares/logger')
 const requestId = require('../middlewares/requestid')
 
 client.collectDefaultMetrics()
@@ -12,12 +11,11 @@ client.collectDefaultMetrics()
  * @param {Function} [callback]
  * @returns {import('express').Express}
  */
-module.exports = (callback = () => { }) => {
+module.exports = (callback = () => {}) => {
     const app = express()
 
     app.use(requestId)
     app.use(express.raw({ type: '*/*' }))
-    app.use(logger)
 
     app.get('/health', require('../handlers/health'))
     app.get('/metrics', async (_, res) => {

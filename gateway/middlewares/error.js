@@ -19,6 +19,7 @@ module.exports = (error, req, res, next) => {
     logger.error(`Error occurred`, {
         method: req.method,
         url: req.url,
+        requestId: req.id,
         error,
     })
 

@@ -1,3 +1,5 @@
+require('./traces');
+
 const express = require('express');
 
 const app = express();

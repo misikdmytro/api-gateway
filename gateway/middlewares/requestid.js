@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require('uuid')
+const { trace, context } = require('@opentelemetry/api')
 
 /**
  * Request ID middleware
@@ -13,5 +14,11 @@ const { v4: uuidv4 } = require('uuid')
 module.exports = (req, res, next) => {
     req.id = uuidv4()
     res.setHeader('X-Request-Id', req.id)
+
+    const currentSpan = trace.getSpan(context.active())
+    if (currentSpan) {
+        currentSpan.setAttribute('http.request_id', req.id)
+    }
+
     next()
 }

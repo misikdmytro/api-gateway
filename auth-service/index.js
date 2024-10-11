@@ -1,3 +1,5 @@
+require('./traces');
+
 const clients = require('./clients.json');
 const express = require('express');
 const multer = require('multer');
