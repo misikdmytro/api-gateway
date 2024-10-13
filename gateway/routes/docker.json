@@ -30,12 +30,12 @@
         },
         "limits": {
             "client": {
-                "rate": 10,
-                "window": 60
+                "rate": 100,
+                "window": 1
             },
             "overall": {
-                "rate": 100,
-                "window": 60
+                "rate": 1000,
+                "window": 1
             }
         },
         "cache": {
@@ -54,12 +54,12 @@
         },
         "limits": {
             "client": {
-                "rate": 5,
-                "window": 60
+                "rate": 50,
+                "window": 1
             },
             "overall": {
-                "rate": 50,
-                "window": 60
+                "rate": 500,
+                "window": 1
             }
         }
     }
